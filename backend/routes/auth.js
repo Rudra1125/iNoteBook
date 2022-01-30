@@ -7,9 +7,14 @@ const express = require("express");
 const User = require("../models/User");
 const router = express.Router();
 const { body, validationResult } = require("express-validator");
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+
+const JWT_SECRET ='Thisisagoodboy';
 //create a user  using :POST "/api/auth/creat".Doesn't require Auth
 // create User
 // No Login required
+
 
 router.post(
   "/createUser",
@@ -34,12 +39,18 @@ router.post(
           .status(400)
           .json({ error: "Sorry a user with this email already exists" });
       }
+      // creating a variable which is a secure password
+      const salt = await bcrypt.genSalt(10)
+
+      const secPass = await bcrypt.hash(req.body.password,salt);
+
+
       // This is  used to create a user
       // here we are using async await function
       user = await User.create({
         name: req.body.name,
         email: req.body.email,
-        password: req.body.password,
+        password: secPass,
       });
 
       // .then(user => res.json(user))
@@ -47,7 +58,14 @@ router.post(
       //   res.json({error:'please enter a unique value for email', message: err.message})});
 
       // res.send(req.body);
-      res.json(user);
+      const data= {
+        user: {
+          id: user.id
+        }
+      }
+      const authToken = jwt.sign(data,JWT_SECRET);
+      //console.log(authToken);
+      res.json({authToken});
     } catch (error) {
       //  this is used when some error occured in feching from the database of something else
       console.error(error.message);
