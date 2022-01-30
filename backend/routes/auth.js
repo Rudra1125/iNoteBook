@@ -3,8 +3,10 @@ const User = require('../models/User');
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
 //create a user  using :POST "/api/auth/".Doesn't require Auth
+// create User 
+// No Login required
 
-router.post('/',[
+router.post('/createUser',[
     body('email','Enter a valid email').isEmail(),
     body('name','Enter a valid name').isLength({min: 3}),
     body('password').isLength({ min: 5 }),
