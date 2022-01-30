@@ -9,12 +9,13 @@ const router = express.Router();
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs"); // it is used to add hash code and salt
 const jwt = require("jsonwebtoken");
+var fetchuser =require('../middleware/fetchuser');
 
 const JWT_SECRET = "Thisisagoodboy";
 //create a user  using :POST "/api/auth/create".Doesn't require Auth
 // create User
 // No Login required
-
+//Route 1
 router.post(
   "/createUser",
   [
@@ -77,7 +78,7 @@ router.post(
 );
 
 //Authentication  a user  using :POST "/api/auth/login
-
+// Route 2
 router.post(
   "/login",
   [
@@ -90,33 +91,50 @@ router.post(
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    const {email, password} =req.body;
-    try{
-      let user =await User.findOne({email});
-      if(!user   ) {
-        return res.status(400).json({error:"Please try to login with correct credentials"});
-
+    const { email, password } = req.body;
+    try {
+      let user = await User.findOne({ email });
+      if (!user) {
+        return res
+          .status(400)
+          .json({ error: "Please try to login with correct credentials" });
       }
       // here we have compare the password using bycrpt.compare function
       const passwordComapare = await bcrypt.compare(password, user.password);
-      if(!passwordComapare){
-        return res.status(400).json({error:"Please try to login with correct credentials"});
-
+      if (!passwordComapare) {
+        return res
+          .status(400)
+          .json({ error: "Please try to login with correct credentials" });
       }
       // stored the data and return the data to auth token
-      const data={
+      const data = {
         user: {
-          id: user.id
-        }
-      }
+          id: user.id,
+        },
+      };
       const authToken = jwt.sign(data, JWT_SECRET);
-      res.json({authToken});
-    }
-    catch(error){
+      res.json({ authToken });
+    } catch (error) {
       console.error(error.message);
       res.status(500).send("Enternal Server Error");
     }
   }
 );
 
+// Route 3
+// Get logged in user details using post "/api/auth/getUser".
+// here login is required
+// here we  give a fetchuser function as a middle ware  and this function will run
+// before the async function. 
+router.post("/getUser",fetchuser, async (req, res) => {
+  try {
+    //  here we are taking user id as to find the the user by its user id
+    var userId = req.user.id;
+    const user = await User.findById(userId).select("-password");
+    res.send(user);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Enternal Server Error");
+  }
+});
 module.exports = router;
