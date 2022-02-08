@@ -1,0 +1,57 @@
+WebApplication
+
+let we have  database
+Username password
+rudra      rudr@1233
+
+an attacker came
+    attack on the database
+
+To get rid of hacking we dont stopre password as a plane text
+
+       u p      
+Client----->backend-----> database
+     <------       <----- 
+
+backend makes hash of the password
+hash--> it is one way function i.e it gave a random string
+rudra-->some string
+rud--> different from previous string
+
+we cant get back from string to password string
+
+
+Let someone have the hash table of hash and password..
+
+To get rid we add some salt to the password
+we dont h ave to do it from scratch
+we have to install node modeule bycrypt.js
+it altomatically generate salt for us.
+
+
+
+When ever we login 
+what the server return usIt return a token
+I this app we use JWT authenticaation.
+ 
+ JWT
+    (Asynchronous) If a callback is supplied, the callback is called with the err or the JWT.
+
+If a user is once authenticated then from next time it will send a auterised web token
+
+json web token have three things in three diffrent colors
+red is algo and type
+purple is the data
+blue is the singnature given to it.
+when ever we dispatch a jwt we will sign it with our secret.
+
+
+
+Concurrently
+
+
+Context API
+     The most important yhing in react is State 
+     And component 
+     App.js is the starting website.
+     
