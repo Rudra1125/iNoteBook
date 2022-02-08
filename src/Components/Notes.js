@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import noteContext from "../Context/Notes/noteContext";
 import AddNote from "./AddNote";
 import NoteItem from "./NoteItem";
@@ -7,7 +7,13 @@ const Notes = () => {
   // and it will save us from component drilling.
   // This will make the app effiecient.
   const context = useContext(noteContext)
-  const {notes} =context;
+  const {notes,getNotes} =context;
+  useEffect(() => {
+    getNotes()
+  
+    
+  }, []);
+  
   return (
     <>
       <AddNote />
