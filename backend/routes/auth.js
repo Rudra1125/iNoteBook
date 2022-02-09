@@ -25,10 +25,10 @@ router.post(
   ],
   async (req, res) => {
     // if there are errors return bad request and the errors
-
+    let success= false;
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({ success,errors: errors.array() });
     }
 
     //  check whether user with the same email exist already
@@ -37,7 +37,7 @@ router.post(
       if (user) {
         return res
           .status(400)
-          .json({ error: "Sorry a user with this email already exists" });
+          .json({success, error: "Sorry a user with this email already exists" });
       }
       // creating a variable which is a secure password
       const salt = await bcrypt.genSalt(10);
@@ -68,7 +68,8 @@ router.post(
       const authToken = jwt.sign(data, JWT_SECRET);
       //console.log(authToken);
       // sending authentication token to the json response page
-      res.json({ authToken });
+       success=true;
+      res.json({success, authToken });
     } catch (error) {
       //  this is used when some error occured in feching from the database of something else
       console.error(error.message);
@@ -87,6 +88,7 @@ router.post(
   ],
   //valodate the email and password
   async (req, res) => {
+    let success=false;
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -95,16 +97,18 @@ router.post(
     try {
       let user = await User.findOne({ email });
       if (!user) {
+        success=false
         return res
           .status(400)
-          .json({ error: "Please try to login with correct credentials" });
+          .json({ success,error: "Please try to login with correct credentials" });
       }
       // here we have compare the password using bycrpt.compare function
       const passwordComapare = await bcrypt.compare(password, user.password);
       if (!passwordComapare) {
+        success=false;
         return res
           .status(400)
-          .json({ error: "Please try to login with correct credentials" });
+          .json({success, error: "Please try to login with correct credentials" });
       }
       // stored the data and return the data to auth token
       const data = {
@@ -113,7 +117,8 @@ router.post(
         },
       };
       const authToken = jwt.sign(data, JWT_SECRET);
-      res.json({ authToken });
+      success=true;
+      res.json({success, authToken });
     } catch (error) {
       console.error(error.message);
       res.status(500).send("Enternal Server Error");
