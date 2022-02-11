@@ -1,8 +1,8 @@
 import React, { useContext, useState } from "react";
 import noteContext from "../Context/Notes/noteContext";
 
-const AddNote = () => {
-
+const AddNote = (props) => {
+  
     const Context = useContext(noteContext);
     // addNote is taken from notecontext
     const [note, setNote] = useState({title: "",description: "" ,tag: ""});
@@ -11,6 +11,7 @@ const AddNote = () => {
         e.preventDefault();
         addNote(note.title,note.description,note.tag);
         setNote({title: "",description: "" ,tag: ""})
+        props.showAlert("Added Successfully","success")
     }
     const onChange = (e) => {
         // here we are using spread property 

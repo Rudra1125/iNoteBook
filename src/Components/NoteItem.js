@@ -14,7 +14,7 @@ const NoteItem = (props) => {
           <p className="card-text">{note.description} </p>
           <div className="d-flex flex-row-reverse"> 
             <i className="fas fa-edit mx-2 text-secondary" onClick = {()=>{updateNote(note)}}></i>
-            <i className="fas fa-trash mx-2 text-danger" onClick = {()=>{deleteNote(note._id)}}></i>
+            <i className="fas fa-trash mx-2 text-danger" onClick = {()=>{deleteNote(note._id); props.showAlert("Deleted Successfully ","success")}}></i>
           </div>
         </div>
       </div>

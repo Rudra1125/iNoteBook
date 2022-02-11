@@ -1,8 +1,9 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import noteContext from "../Context/Notes/noteContext";
 import AddNote from "./AddNote";
 import NoteItem from "./NoteItem";
-const Notes = () => {
+const Notes = (props) => {
   // using use context we we will fetch the notes
   // and it will save us from component drilling.
   // This will make the app effiecient.
@@ -11,22 +12,33 @@ const Notes = () => {
   const context = useContext(noteContext);
   const { notes, getNotes, editNote } = context;
 
+  let navigate=useNavigate();
   const [note, setNote] = useState({id:"",etitle: "",edescription: "" ,etag: ""});
   useEffect(() => {
-    getNotes();
+    
+    if(localStorage.getItem('token')){
+      getNotes();
+      console.log(notes);
 
+    }
+    else{
+      navigate("/login")
+      props.showAlert("Login first","danger");
+    }
+    
     // eslint-disable-next-line
   }, []);
   const updateNote = (currentNote) => {
     ref.current.click();
     // Now the title values or dexrption values will be equal to the current note
     setNote({id:currentNote._id,etitle:currentNote.title,edescription:currentNote.description,etag:currentNote.tag})
+    
   };
   const handleClick = (e) => {
     refClose.current.click()
     editNote(note.id,note.etitle,note.edescription,note.etag);
     console.log("updating the note",note )
-    
+    props.showAlert("Updated Successfully","success")
 }
   const onChange = (e) => {
     // here we are using spread property 
@@ -35,9 +47,10 @@ const Notes = () => {
 };
   const refClose=useRef(null);
   const ref = useRef(null);
+  // const {showAlert}=props;
   return (
     <>
-      <AddNote />
+      <AddNote showAlert={props.showAlert}/>
       <button
         ref={ref}
         type="button"
@@ -148,7 +161,7 @@ const Notes = () => {
         </div>
         {notes.map((note) => {
           return (
-            <NoteItem key={note._id} updateNote={updateNote} note={note} />
+            <NoteItem key={note._id} updateNote={updateNote} showAlert={props.showAlert} note={note} />
           );
         })}
       </div>

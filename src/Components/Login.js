@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const Login = () => {
+const Login = (props) => {
   const [credentials, setCredentials]=useState({email: "",password:""});
-  const history = useNavigate()
+  let history = useNavigate()
   const onChange = (e) => {
     // here we are using spread property 
     //  In this whatever property is present will be there and the overeride or add the new one
@@ -15,27 +15,28 @@ const Login = () => {
     const response = await fetch("http://localhost:5000/api/auth/login", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
-        "auth-token":
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjFmNjRmNjQ0ZGIwMGQxYjg5ZGJkZWRmIn0sImlhdCI6MTY0MzU0Mjc0Nn0.Hog2GMEpJqjagG1oludHrh2WHl6b2UuyzTDY9kGL0Gg",
+        "Content-Type": "application/json"
+        
       },
       body: JSON.stringify({ email:credentials.email , password : credentials.password})
     });
     const json = await response.json();
     if(json.success){
       // save the auth token and redirect
-      localStorage.setItem('token',json.authtoken);
+      localStorage.setItem( "token" , json.authtoken);
       // to redirect we use useNavigate hook
+      props.showAlert("Logged in","success")
       history("/");
+      
     }
     else{
-      alert("invalid credentils");
+      props.showAlert("Invalid Credentials","danger")
     }
     console.log(json); 
   };
   return (
     <div>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="my-3">
         <div className="form-group">
           <label htmlFor="email">Email address</label>
           <input
@@ -64,19 +65,10 @@ const Login = () => {
             onChange={onChange}
           />
         </div>
-        <div className="form-check">
-          <input
-            type="checkbox"
-            className="form-check-input"
-            id="exampleCheck1"
-          />
-          <label className="form-check-label" htmlFor="exampleCheck1">
-            Check me out
-          </label>
-        </div>
+        
         <button
           type="submit"
-          className="btn btn-primary"
+          className="btn btn-primary my-3"
           
         >
           Login

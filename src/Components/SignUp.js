@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const SignUp = () => {
+const SignUp = (props) => {
   const [credentials, setCredentials]=useState({name:"",email: "",password:"",cpassword:""}) ;
-  const history = useNavigate()
+  let history = useNavigate()
   
   const onChange = (e) => {
     // here we are using spread property
@@ -18,9 +18,8 @@ const SignUp = () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "auth-token":
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjFmNjRmNjQ0ZGIwMGQxYjg5ZGJkZWRmIn0sImlhdCI6MTY0MzU0Mjc0Nn0.Hog2GMEpJqjagG1oludHrh2WHl6b2UuyzTDY9kGL0Gg",
-      },
+        
+        },
       body: JSON.stringify({
        name,email,password
       }),
@@ -28,11 +27,12 @@ const SignUp = () => {
     const json = await response.json();
     if (json.success) {
       // save the auth token and redirect
-      localStorage.setItem("token", json.authtoken);
+      localStorage.setItem('token' , json.authtoken);
       // to redirect we use useNavigate hook
       history("/");
+      props.showAlert("Account Created","success")
     } else {
-      alert("invalid credentils");
+      props.showAlert("Invalid credentials","danger")
     }
     console.log(json);
   };

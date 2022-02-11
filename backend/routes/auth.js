@@ -65,11 +65,11 @@ router.post(
         },
       };
       //We are assign the singnature to the user
-      const authToken = jwt.sign(data, JWT_SECRET);
+      const authtoken = jwt.sign(data, JWT_SECRET);
       //console.log(authToken);
       // sending authentication token to the json response page
        success=true;
-      res.json({success, authToken });
+      res.json({success, authtoken });
     } catch (error) {
       //  this is used when some error occured in feching from the database of something else
       console.error(error.message);
@@ -91,13 +91,13 @@ router.post(
     let success=false;
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({success, errors: errors.array() });
     }
     const { email, password } = req.body;
     try {
       let user = await User.findOne({ email });
       if (!user) {
-        success=false
+        
         return res
           .status(400)
           .json({ success,error: "Please try to login with correct credentials" });
@@ -105,7 +105,7 @@ router.post(
       // here we have compare the password using bycrpt.compare function
       const passwordComapare = await bcrypt.compare(password, user.password);
       if (!passwordComapare) {
-        success=false;
+        
         return res
           .status(400)
           .json({success, error: "Please try to login with correct credentials" });
@@ -116,9 +116,9 @@ router.post(
           id: user.id,
         },
       };
-      const authToken = jwt.sign(data, JWT_SECRET);
+      const authtoken = jwt.sign(data, JWT_SECRET);
       success=true;
-      res.json({success, authToken });
+      res.json({success, authtoken });
     } catch (error) {
       console.error(error.message);
       res.status(500).send("Enternal Server Error");
