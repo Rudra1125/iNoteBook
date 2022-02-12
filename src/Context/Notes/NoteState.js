@@ -3,7 +3,7 @@ import { useState } from "react";
 import NoteContext from "./noteContext";
 
 const NoteState = (props) => {
-  const host = "https://inotebookcloud.herokuapp.com/";
+  const host = "https://inotebookcloud.herokuapp.com";
   const notesInitial = [];
   // We will not add notes randomly we will get it for fetch api
   const [notes, setNotes] = useState(notesInitial);
